@@ -1,43 +1,57 @@
 #include <stdio.h>
 
-int main(){
+#define LINHAS 10
+#define COLUNAS 10
 
-    char linhaletras[10] = {'A','B','C','D','E','F','G','H','I','J'};
+int main() {
+    int tabuleiro[LINHAS][COLUNAS];
+    char letras[COLUNAS] = {'A','B','C','D','E','F','G','H','I','J'};
     int i, j;
-    int navio1I = 0, navio1J = 1;
-    int navio2I = 2, navio2J = 3;
 
-    //iniciando o tabuleiro com todas posições = 0
-    int tabuleiro[10][10];
-    for (i = 0; i < 10; i++){
-        for (j = 0; j < 10; j++){
+    // Inicializa o tabuleiro com 0
+    for (i = 0; i < LINHAS; i++) {
+        for (j = 0; j < COLUNAS; j++) {
             tabuleiro[i][j] = 0;
         }
     }
-    
-    //posicionando o navio 1 na horizontal com tamanho de 3 casas
-    for (i = 0; i < 3; i++){
-        tabuleiro[navio1I][navio1J + i] = 3;
+
+    // Navio 1 (horizontal, tamanho 3)
+    for (j = 6; j < 9; j++) {
+        tabuleiro[0][j] = 3;
     }
 
-    //posicionando o navio 2 na vertical com tamanho de 3 casas
-    for (j = 0; j < 3; j++){
-        tabuleiro[navio2I + j][navio2J] = 3;
+    // Navio 2 (vertical, tamanho 3)
+    for (i = 0; i < 3; i++) {
+        tabuleiro[i][0] = 3;
     }
-    
-    // imprime o tabuleiro
-    printf("   === BATALHA NAVAL ===\n");
-    printf("   ");
-    for (i = 0; i < 10; i++) {
-        printf(" %c", linhaletras[i]); // imprime a linha de letras
+
+    // Navio 3 (diagonal principal, tamanho 3)
+    for (i = 0; i < 3; i++) {
+        tabuleiro[3 + i][4 + i] = 3;
+    }
+
+    // Navio 4 (diagonal inversa, tamanho 3)
+    for (i = 0; i < 3; i++) {
+        tabuleiro[6 + i][3 - i] = 3;
+    }
+
+    // Impressão do tabuleiro
+    printf("\n       === BATALHA NAVAL ===\n\n   ");
+
+    // Cabeçalho de letras
+    for (i = 0; i < COLUNAS; i++) {
+        printf(" %c ", letras[i]);
     }
     printf("\n");
 
-    for (i = 0; i < 10; i++) {
-        printf(" %2d ", i + 1); // imprime a coluna de numeros
-        for (j = 0; j < 10; j++) {
-            printf("%d ", tabuleiro[i][j]);
+    // Linhas numeradas
+    for (i = 0; i < LINHAS; i++) {
+        printf("%2d ", i + 1);
+        for (j = 0; j < COLUNAS; j++) {
+            printf(" %d ", tabuleiro[i][j]);
         }
         printf("\n");
     }
+
+    return 0;
 }
