@@ -3,55 +3,105 @@
 #define LINHAS 10
 #define COLUNAS 10
 
-int main() {
-    int tabuleiro[LINHAS][COLUNAS];
-    char letras[COLUNAS] = {'A','B','C','D','E','F','G','H','I','J'};
-    int i, j;
+//funções para posicionar os navios
+void posicionaNavioHorizontal(int tabuleiro[LINHAS][COLUNAS], int linha, int colunaInicial, int tamanho, int valor) {
+    for (int j = colunaInicial; j < colunaInicial + tamanho; j++) {
+        tabuleiro[linha][j] = valor;
+    }
+}
 
-    // Inicializa o tabuleiro com 0
-    for (i = 0; i < LINHAS; i++) {
-        for (j = 0; j < COLUNAS; j++) {
-            tabuleiro[i][j] = 0;
+void posicionaNavioVertical(int tabuleiro[LINHAS][COLUNAS], int coluna, int linhaInicial, int tamanho, int valor) {
+    for (int i = linhaInicial; i < linhaInicial + tamanho; i++) {
+        tabuleiro[i][coluna] = valor;
+    }
+}
+
+void posicionaNavioDiagonal(int tabuleiro[LINHAS][COLUNAS], int linhaInicial, int colunaInicial, int tamanho, int valor) {
+    for (int i = 0; i < tamanho; i++) {
+        tabuleiro[linhaInicial + i][colunaInicial + i] = valor;
+    }
+}
+
+//funções para posicionar as habilidades
+void posicionaCone(int tabuleiro[LINHAS][COLUNAS], int linhaInicial, int centro, int tamanho, int valor) {
+    for (int i = 0; i < tamanho; i++) {
+        int linha = linhaInicial + i;
+        for (int j = centro - i; j <= centro + i; j++) {
+            if (linha >= 0 && linha < LINHAS && j >= 0 && j < COLUNAS) {
+                tabuleiro[linha][j] = valor;
+            }
         }
     }
+}
 
-    // Navio 1 (horizontal, tamanho 3)
-    for (j = 6; j < 9; j++) {
-        tabuleiro[0][j] = 3;
+void posicionaCruz(int tabuleiro[LINHAS][COLUNAS], int linhaCentral, int centro, int tamLinha, int tamColuna, int valor) {
+    int metadeLinha = tamLinha / 2;
+    int metadeColuna = tamColuna / 2;
+
+    for (int i = 0; i < LINHAS; i++) {
+        for (int j = 0; j < COLUNAS; j++) {
+            if (j == centro && i >= linhaCentral - metadeColuna && i <= linhaCentral + metadeColuna) {
+                tabuleiro[i][j] = valor;
+            }
+            if (i == linhaCentral && j >= centro - metadeLinha && j <= centro + metadeLinha) {
+                tabuleiro[i][j] = valor;
+            }
+        }
     }
+}
 
-    // Navio 2 (vertical, tamanho 3)
-    for (i = 0; i < 3; i++) {
-        tabuleiro[i][0] = 3;
+void posicionaOctaedro(int tabuleiro[LINHAS][COLUNAS], int linhaCentral, int centro, int valor) {
+    int metade = 1;
+    for (int i = linhaCentral - metade; i <= linhaCentral + metade; i++) {
+        for (int j = centro - metade; j <= centro + metade; j++) {
+            if (i >= 0 && i < LINHAS && j >= 0 && j < COLUNAS) {
+                if (i == linhaCentral || j == centro)
+                    tabuleiro[i][j] = valor;
+            }
+        }
     }
+}
 
-    // Navio 3 (diagonal principal, tamanho 3)
-    for (i = 0; i < 3; i++) {
-        tabuleiro[3 + i][4 + i] = 3;
-    }
+//função para iniciar o tabuleiro com 0
+void iniciaTabuleiro(int tabuleiro[LINHAS][COLUNAS], char letras[COLUNAS]) {
+    for (int i = 0; i < LINHAS; i++)
+        for (int j = 0; j < COLUNAS; j++)
+            tabuleiro[i][j] = 0;
+}
 
-    // Navio 4 (diagonal inversa, tamanho 3)
-    for (i = 0; i < 3; i++) {
-        tabuleiro[6 + i][3 - i] = 3;
-    }
-
-    // Impressão do tabuleiro
+//função para imprimir o tabuleiro completo
+void imprimeTabuleiro(int tabuleiro[LINHAS][COLUNAS], char letras[COLUNAS]) {
     printf("\n       === BATALHA NAVAL ===\n\n   ");
-
-    // Cabeçalho de letras
-    for (i = 0; i < COLUNAS; i++) {
+    for (int i = 0; i < COLUNAS; i++)
         printf(" %c ", letras[i]);
-    }
     printf("\n");
 
-    // Linhas numeradas
-    for (i = 0; i < LINHAS; i++) {
+    for (int i = 0; i < LINHAS; i++) {
         printf("%2d ", i + 1);
-        for (j = 0; j < COLUNAS; j++) {
+        for (int j = 0; j < COLUNAS; j++) {
             printf(" %d ", tabuleiro[i][j]);
         }
         printf("\n");
     }
+}
+
+//Função principal
+int main() {
+    int tabuleiro[LINHAS][COLUNAS];
+    char letras[COLUNAS] = {'A','B','C','D','E','F','G','H','I','J'};
+
+    iniciaTabuleiro(tabuleiro, letras);
+
+    posicionaNavioHorizontal(tabuleiro, 0, 6, 3, 3);
+    posicionaNavioVertical(tabuleiro, 0, 0, 3, 3);
+    posicionaNavioDiagonal(tabuleiro, 3, 4, 3, 3);
+    posicionaNavioDiagonal(tabuleiro, 7, 1, 3, 3);
+
+    posicionaCone(tabuleiro, 2, 2, 3, 5);
+    posicionaCruz(tabuleiro, 7, 6, 5, 3, 5);
+    posicionaOctaedro(tabuleiro, 4, 7, 5);
+
+    imprimeTabuleiro(tabuleiro, letras);
 
     return 0;
 }
